@@ -5,8 +5,12 @@ fn main() {
     let now = Instant::now();
     let input = fs::read_to_string("src/input.txt").expect("File read failure");
 
-    let mut total = 0;
-    for card in input.lines() {
+    let mut card_totals: Vec<u32> = Vec::new();
+    card_totals.resize(input.lines().count(), 1);
+    for (i, card) in input.lines().collect::<Vec<_>>().iter().enumerate() {
+        if card_totals[i] == 0 {
+            break;
+        }
         let winning_numbers = card.split("|").collect::<Vec<_>>()[0]
             .split(":")
             .collect::<Vec<_>>()[1]
@@ -18,28 +22,21 @@ fn main() {
             .split(" ")
             .collect::<Vec<_>>();
 
-        println!(
-            "winners {} numbers {}",
-            winning_numbers.len(),
-            card_numbers.len()
-        );
-
-        let mut score = 0;
+        let mut numbers_won = 0;
         for number in card_numbers {
             if number.trim() == "" {
                 continue;
             }
             if winning_numbers.contains(&number) {
-                if score == 0 {
-                    score = 1
-                } else {
-                    score *= 2;
-                }
+                numbers_won += 1;
             }
         }
-        total += score;
+
+        for card_i in (i + 1)..=(i + numbers_won) {
+            card_totals[card_i] += card_totals[i];
+        }
     }
 
-    println!("Total scores are {}", total);
+    println!("Total cards are {}", card_totals.iter().sum::<u32>());
     println!("Time elapsed {}ms", now.elapsed().as_millis())
 }

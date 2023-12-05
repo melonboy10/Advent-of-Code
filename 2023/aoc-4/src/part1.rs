@@ -18,12 +18,6 @@ fn main() {
             .split(" ")
             .collect::<Vec<_>>();
 
-        println!(
-            "winners {} numbers {}",
-            winning_numbers.len(),
-            card_numbers.len()
-        );
-
         let mut score = 0;
         for number in card_numbers {
             if number.trim() == "" {
